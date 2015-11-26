@@ -588,6 +588,15 @@ WARNING
             "NOKOGIRI_USE_SYSTEM_LIBRARIES" => "true"
           }
           env_vars["BUNDLER_LIB_PATH"] = "#{bundler_path}" if ruby_version.ruby_version == "1.8.7"
+
+          # Install executable-hooks
+          system('gem install executable-hooks')
+          executable_hooks_path = `find /tmp -type d -name "bin" -path "*/executable-hooks*" -not -path "*/ext/*"`.chomp
+          ENV["PATH"] += ":" + executable_hooks_path
+          system('chmod -R 755 ' + executable_hooks_path)
+          puts 'uninstall executable-hooks'
+          system('gem executable-hooks-uninstaller')
+
           puts "Running: #{bundle_command}"
           instrument "ruby.bundle_install" do
             bundle_time = Benchmark.realtime do
